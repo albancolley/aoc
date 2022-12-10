@@ -104,4 +104,4 @@ class AocBase(metaclass=ABCMeta):
             star = '*'
             if result[1]:
                 star = ' '
-            print(f'{star}{result[0]:20s} {str(result[2])[0:30]:30s} {str(result[3])[0:30]:30s} {result[4]:010.6f}')
+            print(f'{star}{result[0]:20s} {str(result[2]):30s} {str(result[3]):30s} {result[4]:010.6f}')
