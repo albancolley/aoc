@@ -3,79 +3,90 @@ import string
 from aoc2022.common.aocbase import AocBase
 from aoc2022.common.setup import configure
 import logging
-from dataclasses import dataclass
-import sys
-import re
-logger = logging.getLogger("ACO2022-9")
+
+logger = logging.getLogger("ACO2022-10")
+
+
+class CPU:
+
+    def __init__(self, instructions: [str], reg_x=1, screen_width=40, screen_height=6, signal_check_start=20, signal_check_cycle=40):
+        self.instructions = instructions
+        self.reg_x: int = reg_x
+        self.clock: int = 0
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.screen_pixels = screen_width * screen_height
+        self.screen = ['.' for i in range(0, self.screen_pixels)]
+        self.sprite: list[int] = [0, 1, 2]
+        self.pixel = 0
+        self.total = 0
+        self.signal_strength = 0
+        self.signal_check_start = signal_check_start
+        self.signal_check_cycle = signal_check_cycle
+        self.operations = {
+            "noop": {"name": "noop", "params": 0, "func": self.nop, "cycles": 1},
+            "addx": {"name": "addx", "params": 1, "func": self.add_x, "cycles": 2},
+        }
+
+    def run(self):
+        for item in self.instructions:
+            instruction = item.split(' ')
+            instruction.append("")
+            if instruction[0] in self.operations:
+                opp = self.operations[instruction[0]]
+                opp["func"](instruction[1])
+
+    def nop(self, _):
+        self.draw_pixel()
+        self.clock += self.operations["noop"]["cycles"]
+        self.check_signal()
+
+    def add_x(self, param):
+        for _ in range(0, self.operations["addx"]["cycles"]):
+            self.clock += 1
+            self.draw_pixel()
+            self.check_signal()
+        self.reg_x += int(param)
+
+    def check_signal(self):
+        signal_check = (self.clock + self.signal_check_start) % self.signal_check_cycle
+        if signal_check == 0:
+            self.total += self.clock * self.reg_x
+
+    def update_sprite(self) -> [int]:
+        sprite = [self.reg_x-1, self.reg_x, self.reg_x+1]
+        if sprite[0] < 0:
+            sprite[0] += self.screen_pixels
+        if sprite[2] >= self.screen_pixels:
+            sprite[2] -= self.screen_pixels
+        self.sprite = sprite
+
+    def draw_pixel(self):
+        self.update_sprite()
+        if self.pixel % 40 in self.sprite:
+            self.screen[self.pixel] = "#"
+        self.pixel = (self.pixel + 1) % self.screen_pixels
+
 
 class Aoc202210(AocBase):
 
-    def calc_1(self, data ) -> int:
-        total = 0
-        reg_x = 1
-        cycle = 0
-        for item in data:
-            match item.split(' '):
-                case ['noop']:
-                    cycle += 1
-                    cycle_mod = abs(cycle - 20) % 40
-                    if cycle_mod == 0:
-                        total += cycle * reg_x
-                        print(f'{cycle} {cycle_mod} {total} {cycle * reg_x} {reg_x} ')
-                case['addx', value]:
-                    cycle += 2
-                    cycle_mod = abs(cycle - 20) % 40
-                    match cycle_mod:
-                        case 0:
-                            total += cycle * reg_x
-                            print(f'{cycle} {cycle_mod} {total} {cycle * reg_x} {reg_x} ')
-                        case 1:
-                            total += (cycle - 1) * reg_x
-                            print(f'{cycle} {cycle_mod} {total} {(cycle-1) * reg_x} {reg_x} ')
-                    reg_x += int(value)
-
-        return total
-
-
-    def build_sprite(self, regx):
-        sprite = [regx-1, regx, regx +1]
-        if sprite[0] < 0:
-            sprite[0] += 240
-        if sprite[2] > 239:
-            sprite[2] -= 240
-        return sprite
+    def calc_1(self, data) -> int:
+        cpu = CPU(data)
+        cpu.run()
+        return cpu.total
 
     def calc_2(self, data: [str]) -> int:
-        screen = ['.' for i in range(0, 240)]
-        reg_x = 1
-        cycle = 1
-        pixel = 0
-        for item in data:
-            match item.split(' '):
-                case ['noop']:
-                    sprite = self.build_sprite(reg_x)
-                    if pixel % 40 in sprite:
-                        screen[pixel] = "#"
-                    cycle += 1
-                    pixel = (pixel + 1) % 240
-                case ['addx', value]:
-                    for step in range(0, 2):
-                        sprite = self.build_sprite(reg_x)
-                        if pixel % 40 in sprite:
-                            screen[pixel] = "#"
-                        cycle += 1
-                        pixel = (pixel+1) % 240
-                    reg_x += int(value)
+        cpu = CPU(data)
+        cpu.run()
         for i in range(0, 7):
-            print(''.join(screen[i*40:i*40+40]))
-        return ''.join(screen)
+            print(''.join(cpu.screen[i*40:i*40+40]))
+        return ''.join(cpu.screen)
 
     def load_handler_part1(self, data: [str]) -> [str]:
         return data
 
     def load_handler_part2(self, data: [str]) -> [str]:
         return data
-
 
 
 if __name__ == '__main__':

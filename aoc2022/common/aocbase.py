@@ -29,8 +29,11 @@ class AocBase(metaclass=ABCMeta):
         pass
 
     def part_1(self, filename: str) -> int:
+        start_time = time.perf_counter()
         data = load_file(filename, self.load_handler_part1)
+        load_time = time.perf_counter()
         result = self.calc_1(data)
+        calc_time = time.perf_counter()
 
         split_filename = splitext(filename)
         expected_filename = split_filename[0] + "_result" + split_filename[1]
@@ -45,11 +48,14 @@ class AocBase(metaclass=ABCMeta):
         except ValueError:
             success = False
 
-        return filename, expected == result, expected, result
+        return filename, expected == result, expected, result, load_time - start_time, calc_time - load_time
 
     def part_2(self, filename: str) -> int:
+        start_time = time.perf_counter()
         data = load_file(filename, self.load_handler_part2)
+        load_time = time.perf_counter()
         result = self.calc_2(data)
+        calc_time = time.perf_counter()
 
         split_filename = splitext(filename)
         expected_filename = split_filename[0] + "_result" + split_filename[1]
@@ -57,7 +63,7 @@ class AocBase(metaclass=ABCMeta):
             with open(expected_filename, 'w') as f:
                 print(-1, file=f)
         expected = type(result)(load_file(expected_filename)[0])
-        return filename, expected == result, expected, result
+        return filename, expected == result, expected, result, load_time - start_time, calc_time - load_time
 
     @staticmethod
     def glob_re(pattern, strings):
@@ -87,7 +93,7 @@ class AocBase(metaclass=ABCMeta):
 
     def run(self, part1_path: str, part2_path: str) -> []:
         results = { "Part 1":self.run_part_1(part1_path), "Part 2": self.run_part_2(part2_path)}
-        print(f'{"":21s} {"Expected":30s} {"Actual":30s} {"Time (s.ms)":8s}')
+        print(f'{"":21s} {"Expected":30s} {"Actual":30s} {"Time (s.ms)":8s} {"Load Time":8s} {"Calc Time":8s}')
         self.display(results, "Part 1")
         self.display(results, "Part 2")
         failed = False
@@ -104,4 +110,4 @@ class AocBase(metaclass=ABCMeta):
             star = '*'
             if result[1]:
                 star = ' '
-            print(f'{star}{result[0]:20s} {str(result[2])[0:30]:30s} {str(result[3])[0:30]:30s} {result[4]:010.6f}')
+            print(f'{star}{result[0]:20s} {str(result[2])[0:30]:30s} {str(result[3])[0:30]:30s} {result[6]:010.6f}  {result[4]:010.6f}  {result[5]:010.6f}')
