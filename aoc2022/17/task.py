@@ -25,7 +25,7 @@ class Aoc202212(AocBase):
         for row in chamber:
             output.insert(0, '{:09b}'.format(row))
         for row in output:
-7            print(row)
+            print(row)
         print()
 
 

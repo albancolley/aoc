@@ -79,12 +79,6 @@ class Aoc202225(AocBase):
     def load_handler_part2(self, data: [str]) -> [str]:
         return self.load_handler_part1(data)
 
-    # def distance(self, pos, end_position):
-    #     dis = (pos[0] - end_position[0]) * (pos[0] - end_position[0])
-    #     dis += (pos[1] - end_position[1]) * (pos[1] - end_position[1])
-    #     math.sqrt()
-
-
 if __name__ == '__main__':
     configure()
     aoc = Aoc202225()

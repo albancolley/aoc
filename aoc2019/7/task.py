@@ -55,7 +55,7 @@ class Aoc201905(AocBase):
     @staticmethod
     def output(c: IntCode, p: Params):
         c.value = str(p.parameter1)
-        print(c.value)
+        # print(c.value)
         c.instruction_pointer += 2
 
     @staticmethod
@@ -181,7 +181,7 @@ class Aoc201905(AocBase):
                             parameters = self.get_params(amp, data, operation, pm1, pm2)
                             operation["func"](amp, parameters)
                             if operation["name"] == "output":
-                                amps[(index+1) % 5].input_data[1] = int(amp.value)
+                                amps[(index+1) % 5].input_data.append(str(int(amp.value)))
                                 done = False
                                 break
                 last_output = int(amp.value)
@@ -196,8 +196,8 @@ class Aoc201905(AocBase):
             for j in range(0, len(data)):
                 c.memory[j] = data[j]
             c.input_data.append(phase[i])
-            c.input_data.append(0)
             amps.append(c)
+        amps[0].input_data.append('0')
         return amps
 
     def load_handler_part1(self, data: [str]) -> [str]:
