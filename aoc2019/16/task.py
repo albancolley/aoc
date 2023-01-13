@@ -38,35 +38,28 @@ class Aoc201916(AocBase):
             values = result
         return ''.join([str(x) for x in result])[0:8]
 
-
     def calc_2(self, data) -> int:
-        return 0
+        values = data
+        target = int(''.join(map(str, values[0:7])))
+        message_sum = sum(values)
+        message_len = len(values)
+        messages_to_sum = 10000 - int(target / message_len) - 1
+        position_in_messages = (target % message_len)
+        message = values[position_in_messages:] + values * messages_to_sum
+        for i in range(0, 100):
+            new_message = []
+            total = sum(message)
+            for j in range(0, len(message)):
+                new_message.append(total % 10)
+                total -= message[j]
+            message = new_message
+        return ''.join([str(x) for x in message[0:8]])
 
     def load_handler_part1(self, data: [str]) -> [str]:
         return [int(c) for c in data[0]]
 
 
 
-    def load_handler_part1s(self, data: [str]) -> [str]:
-        factories: {} = {}
-        ores: {} = {}
-        for line in data:
-            a = line.split(' => ')
-            b = a[0].split(', ')
-            ingredients = []
-            f = a[1].split(' ')
-            f_number = int(f[0])
-            f_name = f[1]
-            for c in b:
-                d = c.split(' ')
-                ingredients_name = d[1]
-                ingredients_number = int(d[0])
-                ingredients.append((ingredients_number, ingredients_name))
-                if ingredients_name == 'ORE':
-                    ores[f_name] = (ingredients_number, f_number)
-            factories[f_name] = ((f_number, f_name), ingredients)
-
-        return factories, ores
 
     def load_handler_part2(self, data: [str]) -> [str]:
         return self.load_handler_part1(data)
@@ -75,6 +68,6 @@ class Aoc201916(AocBase):
 if __name__ == '__main__':
     configure()
     aoc = Aoc201916()
-    failed, results = aoc.run("part1_[0-9]*.txt", "part2x_[0-9]+.txt")
+    failed, results = aoc.run("part1x_[0-9]*.txt", "part2_[1-4]+.txt")
     if failed:
         exit(1)

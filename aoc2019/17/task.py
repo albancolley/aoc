@@ -40,6 +40,9 @@ class IntCode:
         for j in range(0, len(data)):
             self.memory[j] = int(data[j])
 
+        self.output =""
+
+
     def read(self, parameter: int):
         string_instruction = str(self.memory[self.instruction_pointer])
         mode = 0
@@ -92,6 +95,10 @@ class IntCode:
 
     def output(self, p: Params):
         self.value = p.parameter1
+        if self.value == 10:
+            print(self.output[1:])
+            self.output = ""
+        self.output += chr(self.value)
         self.output_data.append(self.value)
         self.instruction_pointer += 2
 
@@ -203,63 +210,85 @@ class Aoc201905(AocBase):
 
 
     def calc_2(self, data: [str]) -> int:
+        # c = IntCode(data)
+        # c.input_data.append(1)
+        # c.run()
+        #
+        # all = []
+        # grid_array = []
+        # row = []
+        # width = 0
+        # for p in c.output_data:
+        #     if p == 10:
+        #         break
+        #     width += 1
+        #
+        # for p in c.output_data:
+        #     if p == 10:
+        #         grid_array.append(row)
+        #         print(''.join(row))
+        #         row = []
+        #     else:
+        #         row.append(chr(p))
+        #         all.append(p)
+
         c = IntCode(data)
-        c.input_data.append(1)
+        c.memory[0] = 2
+        code='A,A\10L,8,R,12,L,2\10\10\10y\10'
+        code='A\10\10\10\10y\10'
+        c.input_data = [65, 44, 66, 44, 67, 44, 66, 44, 65, 44, 67, 10]
         c.run()
 
-        all = []
-        grid_array = []
-        row = []
-        width = 0
-        for p in c.output_data:
-            if p == 10:
-                break
-            width += 1
+        # grid = np.array(all).reshape((-1, width))
+        # self.print_grid(grid)
+        # grid2 = grid.copy()
 
-        for p in c.output_data:
-            if p == 10:
-                grid_array.append(row)
-                print(''.join(row))
-                row = []
-            else:
-                row.append(chr(p))
-                all.append(p)
+        # np_position = np.where(grid == 94)
+        # position = (np_position[0][0], np_position[1][0])
+        # done = False
+        # path = ['L']
+        # facing = (0, -1)
+        # turns = {(0, -1): [('L', (1, 0)), ('R', (-1, 0))],
+        #          (0, 1): [('L', (-1, 0)), ('R', (1, 0))],
+        #          (-1, 0): [('L', (0, 1)), ('R', (0,  -1))],
+        #          (1, 0): [('L', (0, -1)), ('R', (0,  1))]}
+        #
+        # while not done:
+        #     new_position = (position[0] + facing[0], position[1] + facing[1])
+        #     steps = 0
+        #     while grid[new_position] == 35:
+        #         grid2[new_position] = 64
+        #         self.print_grid(grid2)
+        #         position = new_position
+        #         steps += 1
+        #         new_position = (position[0] + facing[0], position[1] + facing[1])
+        #         if 0 <= new_position[0] < grid.shape[0] and 0 <= new_position[1] < grid.shape[1]:
+        #             continue
+        #         break
+        #     if steps > 0:
+        #         path.append(steps)
+        #     print('XX')
+        #     done = True
+        #     for direction, new_facing in turns[facing]:
+        #         new_position = (position[0] + new_facing[0], position[1] + new_facing[1])
+        #         if not( 0 <= new_position[0] < grid.shape[0] and 0 <= new_position[1] < grid.shape[1]):
+        #             continue
+        #         if grid[new_position] == 35:
+        #             done = False
+        #             facing = new_facing
+        #             path.append(direction)
+        # self.print_grid(grid2)
+        # print(''.join([str(x) for x in path]))
+        return 0
 
-        grid = np.array(all).reshape((-1, width))
-        np_position = np.where(grid == 94)
-        position = (np_position[0][0], np_position[1][0])
-        done = False
-        path = ['L']
-        facing = (0, -1)
-        turns = {(0, -1): [('L', (1, 0)), ('R', (-1, 0))],
-                 (0, 1): [('L', (-1, 0)), ('R', (1, 0))],
-                 (-1, 0): [('L', (0, 1)), ('R', (0,  -1))],
-                 (1, 0): [('L', (0, -1)), ('R', (0,  1))]}
-
-        while not done:
-            new_position = (position[0] + facing[0], position[1] + facing[1])
-            steps = 0
-            while grid[new_position] == 35:
-                position = new_position
-                steps += 1
-                new_position = (position[0] + facing[0], position[1] + facing[1])
-                if new_position[0] < 0 or new_position[0] >= grid.shape[0]-1 \
-                        or new_position[1] < 0 or new_position[1] >= grid.shape[1]-1:
-                    break
-            if steps > 0:
-                path.append(steps)
-            done = True
-            for direction, new_facing in turns[facing]:
-                new_position = (position[0] + new_facing[0], position[1] + new_facing[1])
-                if new_position[0] < 0 or new_position[0] > grid.shape[0] \
-                        or new_position[1] < 0 or new_position[0] > grid.shape[1]:
-                    continue
-                if grid[new_position] == 35:
-                    done = False
-                    facing = new_facing
-                    path.append(direction)
-
-        return path
+    def print_grid(self, grid):
+        print()
+        for l in grid:
+            line = ""
+            for m in l:
+                line += chr(m)
+            print(line)
+        print()
 
     def load_handler_part1(self, data: [str]) -> [str]:
         return data[0].split(",")
