@@ -1,3 +1,1 @@
-# 2023 Advent of Code
-
-See folders for each year
+# 2023 Advent of Codes
