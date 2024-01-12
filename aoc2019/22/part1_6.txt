@@ -1,0 +1,2 @@
+10
+deal into new stack

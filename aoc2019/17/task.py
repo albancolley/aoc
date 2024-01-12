@@ -22,7 +22,6 @@ class IntCode:
         self.done: bool = False
         self.input_data: [int] = []
         self.input_data_pos: int = 0
-        self.output_data: [int] = []
         self.relative_base: int = 0
         self.operations = {
             1: {"name": "add", "params": 2, "func": self.add},
@@ -37,17 +36,22 @@ class IntCode:
             99: {"name": "exit", "params": 0, "func": self.exit},
         }
 
+        self.tiles = defaultdict(int)
+        self.values: [] = []
+        self.score = 0
+        self.ball = (0,0)
+        self.joystick_pos = (0,0)
+
+        self.turn = {
+            0: {(0, 1): (-1, 0), (-1, 0): (0, -1), (0, -1): (1, 0), (1, 0): (0, 1)},
+            1: {(0, 1): (1, 0), (1, 0): (0, -1), (0, -1): (-1, 0), (-1, 0): (0, 1)},
+        }
+
         for j in range(0, len(data)):
             self.memory[j] = int(data[j])
 
-        self.output =""
-
-
     def read(self, parameter: int):
-        string_instruction = str(self.memory[self.instruction_pointer])
-        mode = 0
-        if len(string_instruction) >= 2 + parameter:
-            mode = int(string_instruction[-(parameter + 1)])
+        mode = self.get_mode(parameter)
         parameter_address =  self.instruction_pointer + parameter
         if mode == 0:
             return self.memory[self.memory[parameter_address]]
@@ -56,11 +60,21 @@ class IntCode:
         elif mode == 2:
             return self.memory[self.relative_base + self.memory[parameter_address]]
 
-    def write(self, parameter: int, value:int):
+    def get_mode(self, parameter):
         string_instruction = str(self.memory[self.instruction_pointer])
-        mode = 0
-        if len(string_instruction) >= 2 + parameter:
-            mode = int(string_instruction[-(parameter + 2)])
+        inst = int(string_instruction)
+        op = inst % 100
+        mode3, mode2, mode1 = f"{inst // 100:03d}"
+        if parameter == 1:
+            mode = int(mode1)
+        if parameter == 2:
+            mode = int(mode2)
+        if parameter == 3:
+            mode = int(mode3)
+        return mode
+
+    def write(self, parameter: int, value:int):
+        mode = self.get_mode(parameter)
         parameter_address = self.instruction_pointer + parameter
         if mode == 0:
             self.memory[self.memory[parameter_address]] = value
@@ -82,24 +96,16 @@ class IntCode:
         self.instruction_pointer += 4
 
     def input(self, p: Params):
-        string_instruction = str(self.memory[self.instruction_pointer])
-        apm1 = 0
-        if len(string_instruction) > 2:
-            apm1 = int(string_instruction[-3])
-        if apm1 == 2:
-            self.memory[self.relative_base + self.memory[self.instruction_pointer+1]] = self.input_data[self.input_data_pos]
-        else:
-            self.memory[p.parameter1] = self.input_data[self.input_data_pos]
+        i = self.input_data[self.input_data_pos]
         self.input_data_pos += 1
+        self.write(1, i)
         self.instruction_pointer += 2
 
     def output(self, p: Params):
-        self.value = p.parameter1
-        if self.value == 10:
-            print(self.output[1:])
-            self.output = ""
-        self.output += chr(self.value)
-        self.output_data.append(self.value)
+        self.values.append(p.parameter1)
+        if p.parameter1 == 10:
+            print(''.join(chr(x) for x in self.values[:-1]))
+            self.values = []
         self.instruction_pointer += 2
 
     def jump_if_true(self, p: Params):
@@ -154,10 +160,10 @@ class IntCode:
     def get_params(self, operation, pm1, pm2):
         p1 = 0
         if operation["params"] >= 1:
-            p1 = self.get_value(self.instruction_pointer + 1, pm1)
+            p1 = self.read(1)
         p2 = 0
         if operation["params"] == 2:
-            p2 = self.get_value(self.instruction_pointer + 2, pm2)
+            p2 = self.read(2)
         p = Params(p1, p2)
         return p
 
@@ -234,9 +240,8 @@ class Aoc201905(AocBase):
 
         c = IntCode(data)
         c.memory[0] = 2
-        code='A,A\10L,8,R,12,L,2\10\10\10y\10'
-        code='A\10\10\10\10y\10'
-        c.input_data = [65, 44, 66, 44, 67, 44, 66, 44, 65, 44, 67, 10]
+        code='A,B,C,A,B,C,A\nL,8,R,12,R,2,R,10\nL,10,L,10,L,10,R,2\nR,10\ny\n'
+        c.input_data = [ord(c) for c in code]
         c.run()
 
         # grid = np.array(all).reshape((-1, width))

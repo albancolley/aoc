@@ -119,33 +119,34 @@ class Aoc202212(AocBase):
     def load_handler_part2(self, data: [str]) -> [str]:
         return self.load_handler_part1(data)
 
-    def draw(self, count, cave, size, min_x, last_sand, extra):
-        image = Image.new("RGB", size, color= ImageColor.getrgb('white'))
-        source = (500 - min_x + extra, 0)
-        image.putpixel(source, ImageColor.getrgb('blue'))
-        for key in cave:
-            value = cave[key]
-            if value == "#":
-                colour = ImageColor.getrgb('black')
-            elif value == "o":
-                colour = ImageColor.getrgb('yellow')
-            key = (key[0] - min_x, key[1])
-            x, y = key
-            x = x + extra
-            if 0 <= x < size[0] and 0 <= y < size[1]:
-                image.putpixel((x, y), colour)
-        if last_sand:
-            if 0 <= x < size[0] and 0 <= y < size[1]:
-                image.putpixel((x,y), ImageColor.getrgb('red'))
-        path = os.path.join('C:\\WIP\\aoc', f'{count:06}.png')
-        # (width, height) = (image.width * 2, image.height * 2)
-        # i2 = image.resize((width, height), Image.Resampling.BOX )
-        image.save(path)
+    def draw(self, count, cave, size, min_x, last_sand, extra=0):
+        pass
+        # image = Image.new("RGB", size, color= ImageColor.getrgb('white'))
+        # source = (500 - min_x + extra, 0)
+        # image.putpixel(source, ImageColor.getrgb('blue'))
+        # for key in cave:
+        #     value = cave[key]
+        #     if value == "#":
+        #         colour = ImageColor.getrgb('black')
+        #     elif value == "o":
+        #         colour = ImageColor.getrgb('yellow')
+        #     key = (key[0] - min_x, key[1])
+        #     x, y = key
+        #     x = x + extra
+        #     if 0 <= x < size[0] and 0 <= y < size[1]:
+        #         image.putpixel((x, y), colour)
+        # if last_sand:
+        #     if 0 <= x < size[0] and 0 <= y < size[1]:
+        #         image.putpixel((x,y), ImageColor.getrgb('red'))
+        # path = os.path.join('C:\\WIP\\aoc', f'{count:06}.png')
+        # # (width, height) = (image.width * 2, image.height * 2)
+        # # i2 = image.resize((width, height), Image.Resampling.BOX )
+        # image.save(path)
 
 
 if __name__ == '__main__':
     configure()
     aoc = Aoc202212()
-    failed, results = aoc.run("part1_x[0-9]+.txt", "part2_[0-9]+.txt")
+    failed, results = aoc.run("part1_[0-9]+.txt", "part2_[0-9]+.txt")
     if failed:
         exit(1)
