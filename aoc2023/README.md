@@ -1,1 +1,1 @@
-# 2023 Advent of Codes
+# 2023 Advent of Code
