@@ -58,82 +58,180 @@ class Aoc2023010(AocBase):
             print(line)
         print()
 
-    def calc_2(self, grid: Grid) -> int:
-        # didn't solve examples for part 2 as I found it harder than that actual puzzle input I was given.
-        # Sure I didn't find the best solution!
-        # example of 19*19 grid to show how costs repeat for the inside of teh diamond
-        '''
-0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
-0    0    0    0    0    0    0    0    944  5639 949  0    0    0    0    0    0    0    0
-0    0    0    0    0    0    0    944  6545 7451 6552 949  0    0    0    0    0    0    0
-0    0    0    0    0    0    944  6545 7451 7458 7451 6552 949  0    0    0    0    0    0
-0    0    0    0    0    944  6545 7451 7458 7451 7458 7451 6552 949  0    0    0    0    0
-0    0    0    0    944  6545 7451 7458 7451 7458 7451 7458 7451 6552 949  0    0    0    0
-0    0    0    944  6545 7451 7458 7451 7458 7451 7458 7451 7458 7451 6552 949  0    0    0
-0    0    944  6545 7451 7458 7451 7458 7451 7458 7451 7458 7451 7458 7451 6552 949  0    0
-0    944  6545 7451 7458 7451 7458 7451 7458 7451 7458 7451 7458 7451 7458 7451 6552 949  0
-0    5621 7451 7458 7451 7458 7451 7458 7451 7458 7451 7458 7451 7458 7451 7458 7451 5639 0
-0    927  6534 7451 7458 7451 7458 7451 7458 7451 7458 7451 7458 7451 7458 7451 6545 941  0
-0    0    927  6534 7451 7458 7451 7458 7451 7458 7451 7458 7451 7458 7451 6545 941  0    0
-0    0    0    927  6534 7451 7458 7451 7458 7451 7458 7451 7458 7451 6545 941  0    0    0
-0    0    0    0    927  6534 7451 7458 7451 7458 7451 7458 7451 6545 941  0    0    0    0
-0    0    0    0    0    927  6534 7451 7458 7451 7458 7451 6545 941  0    0    0    0    0
-0    0    0    0    0    0    927  6534 7451 7458 7451 6545 941  0    0    0    0    0    0
-0    0    0    0    0    0    0    927  6534 7451 6545 941  0    0    0    0    0    0    0
-0    0    0    0    0    0    0    0    927  5621 941  0    0    0    0    0    0    0    0
-0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
-        :param grid:
-        :return:
-        '''
+    def calc_2(self, grid: Grid) -> str:
 
-        costs1 = self.bfs(grid)
-        max_cost = max(costs1)[0] + 1
-        middle_odd_cost = self.get_odd_cost(costs1, max_cost)
-        middle_even_cost = self.get_even_cost(costs1, max_cost)
+        # grid19 = self.expand_grid(grid, 19)
+        #
+        # costs19 = self.bfs(grid19)
+        #
+        # steps = 65 + 8*131
+        #
+        # total_cost = self.get_odd_cost(costs19, steps)
+        # sections = self.get_sections(grid19, costs19, grid.width, grid.height)
+        # total = 0
+        # even = False
+        # for y in range(19):
+        #     line = ""
+        #     for x in range(19):
+        #         if even:
+        #             line += f'{self.get_even_cost(sections[(x,y)].costs, steps):<5}'
+        #             total += self.get_even_cost(sections[(x, y)].costs, steps)
+        #         else:
+        #             total += self.get_odd_cost(sections[(x, y)].costs, steps)
+        #             line += f'{self.get_odd_cost(sections[(x, y)].costs, steps):<5}'
+        #         # even = not even
+        #     print(line)
 
-        remainder = int(26501365 % ((max_cost)/2))
-        multiplier = int((26501365 - remainder) / max_cost)
+        # top_cost = 5583 +
+        multiplier = 8
+        multiplier = 202300
 
-        new_grid_size = 9
-        new_grid_height = int(new_grid_size / 2)
-        grid9 = self.expand_grid(grid, new_grid_size)
-        costs9 = self.bfs(grid9)
-        sections: dict[(int, int), Section] = self.get_sections(grid9, costs9, grid.width, grid.height)
-        top_cost = self.get_odd_cost(sections[new_grid_height, 0].costs, max_cost*new_grid_height + remainder)
-        bottom_cost = self.get_odd_cost(sections[new_grid_height, new_grid_size-1].costs, max_cost*new_grid_height + remainder)
-        left_cost = self.get_odd_cost(sections[0, new_grid_height].costs, max_cost*new_grid_height + remainder)
-        right_cost = self.get_odd_cost(sections[new_grid_size-1, new_grid_height].costs, max_cost*new_grid_height + remainder)
-
-        top_left_cost = self.get_odd_cost(sections[new_grid_height-1, 0].costs, max_cost*new_grid_height + remainder)
-        top_left_cost2 = self.get_odd_cost(sections[new_grid_height-1, 1].costs, max_cost*new_grid_height + remainder)
-
-        top_right_cost = self.get_odd_cost(sections[new_grid_height+1, 0].costs, max_cost*new_grid_height + remainder)
-        top_right_cost2 = self.get_odd_cost(sections[new_grid_height+1, 1].costs, max_cost*new_grid_height + remainder)
-
-        bottom_left_cost = self.get_odd_cost(sections[new_grid_height-1, new_grid_size - 1].costs, max_cost*new_grid_height + remainder)
-        bottom_left_cost2 = self.get_odd_cost(sections[new_grid_height-1, new_grid_size - 2].costs, max_cost*new_grid_height + remainder)
-
-        bottom_right_cost = self.get_odd_cost(sections[new_grid_height+1, new_grid_size - 1].costs, max_cost*new_grid_height + remainder)
-        bottom_right_cost2 = self.get_odd_cost(sections[new_grid_height+1, new_grid_size - 2].costs, max_cost*new_grid_height + remainder)
-
-        top = top_cost
-        bottom = bottom_cost
-        left = left_cost
-        right = right_cost
-
-        top_left = top_left_cost2 * (multiplier-1) + top_left_cost * multiplier
-        top_right = top_right_cost2 * (multiplier-1) + top_right_cost * multiplier
-        bottom_left = bottom_left_cost2 * (multiplier-1) + bottom_left_cost * multiplier
-        bottom_right = bottom_right_cost2 * (multiplier-1) + bottom_right_cost * multiplier
-
-        # Middle costs are repeated many times in the shape of a diamond.
-        # There is one less row of odd cost to even cost
-        middle_odds = middle_odd_cost * (multiplier-1)**2
-        middle_evens = middle_even_cost * multiplier**2
+        top = 5639
+        bottom = 5621
+        left =  5621
+        right = 5639
+        top_left = 6545 * (multiplier-1) + 944 * multiplier
+        top_right = 6552 * (multiplier-1) + 949 * multiplier
+        bottom_left = 6534 * (multiplier-1) + 927 * multiplier
+        bottom_right = 6545 * (multiplier-1) + 941 * multiplier
+        middle_odds = 7458 * (multiplier-1)**2
+        middle_evens = 7451 * multiplier**2
 
         total2 = top + bottom + left + right + top_left + top_right + bottom_left + bottom_right + middle_odds + middle_evens
 
-        return total2
+
+        return f'1078146 {total2}'
+
+        return f'{total_cost} {total} {total2}'
+
+        cost = self.bfs(grid)
+
+        grid7 = self.expand_grid(grid, 7)
+
+        costs7 = self.bfs(grid7)
+
+        sections = self.get_sections(grid7, costs7, grid.width, grid.height)
+
+        # self.view(grid7, costs7)
+
+        even_cost = self.get_even_cost(cost, math.inf)
+        odd_cost = self.get_odd_cost(cost, math.inf)
+
+        totals = []
+        for steps in [80]:
+            # for steps in (6, 10, 50, 100):
+            total_cost = self.get_even_cost(costs7, steps)
+            if steps <= sections[(3, 0)].top_min_cost:
+                totals.append(total_cost)
+                continue
+
+            x_change_up = sections[(3, 0)].top_min_cost - sections[(3, 0)].bottom_min_cost + 1
+            x_change_down = sections[(3, 6)].bottom_min_cost - sections[(3, 6)].top_min_cost + 1
+            y_change_left = sections[(0, 3)].left_min_cost - sections[(0, 3)].right_min_cost + 1
+            y_change_right = sections[(6, 3)].right_min_cost - sections[(6, 3)].left_min_cost + 1
+
+            x_steps_up = (steps - sections[(3, 0)].top_min_cost) % x_change_up
+            x_steps_down = (steps - sections[(3, 6)].bottom_min_cost) % x_change_down
+            y_steps_left = (steps - sections[(0, 3)].left_min_cost) % y_change_left
+            y_steps_right = (steps - sections[(6, 3)].right_min_cost) % y_change_right
+
+            remainder = 80
+
+
+
+            x_repeat_up = int((steps - sections[(3, 0)].min_cost) / x_change_up)
+            x_repeat_down = int((steps - sections[(3, 6)].min_cost) / x_change_down)
+            y_repeat_left = int((steps - sections[(0, 3)].min_cost) / y_change_left)
+            y_repeat_right = int((steps - sections[(6, 3)].min_cost) / y_change_right)
+
+            print(x_change_up, x_change_down, y_change_left, y_change_right)
+
+            print(x_steps_up, x_steps_down, y_steps_left, y_steps_right)
+
+            print(x_repeat_up, x_repeat_down, y_repeat_left, y_repeat_right)
+
+            # costs for the top, bottom, left, right point
+            cost_top = self.get_even_cost(sections[(3, 0)].zeroed_costs, x_steps_up)
+            cost_bottom = self.get_even_cost(sections[(3, 6)].zeroed_costs, x_steps_down)
+            cost_left = self.get_even_cost(sections[(0, 3)].zeroed_costs, y_steps_left)
+            cost_right = self.get_even_cost(sections[(6, 3)].zeroed_costs, y_steps_right)
+
+            total_cost += cost_top + cost_bottom + cost_left + cost_right
+
+            print(cost_top, cost_bottom, cost_left, cost_right)
+
+            complete_total = x_repeat_up + (x_repeat_up * (x_repeat_up - 1))
+            complete_total += x_repeat_down + (x_repeat_down * (x_repeat_down - 1))
+            complete_total += y_repeat_left + 2*(y_repeat_left - 1) + 2*(y_repeat_left - 2) + 2*(y_repeat_left - 3)
+            complete_total += y_repeat_right + 2*(y_repeat_right - 1)  + 2*(y_repeat_right - 2)  + 2*(y_repeat_right - 3)
+
+            print(complete_total)
+
+            complete_even = int(x_repeat_up * (x_repeat_up+1) / 2)
+            complete_even += int(x_repeat_down * (x_repeat_down+1) / 2)
+
+            evens_left = int(y_repeat_left * (y_repeat_left+1) / 2) - (int((y_repeat_left-4) * (y_repeat_left-3) / 2))*2
+            complete_even += evens_left
+
+            evens_right = int(y_repeat_right * (y_repeat_right+1) / 2) - (int((y_repeat_right-4) * (y_repeat_right-3) / 2))*2
+            complete_even += evens_right
+
+            compete_odd = complete_total - complete_even
+
+            # if (min)
+            total_cost += even_cost * complete_even
+            total_cost += odd_cost * compete_odd
+
+            top_left_diagonal = sections[(0, 0)].costs[(0, 0)] - sections[(1, 1)].costs[(0, 0)]
+            top_right_diagonal = sections[(6, 0)].costs[(grid.width - 1, 0)] - sections[(5, 1)].costs[
+                (grid.width - 1, 0)]
+
+            bottom_left_diagonal = sections[(0, 6)].costs[(0, grid.height - 1)] - sections[(1, 5)].costs[
+                (0, grid.height - 1)]
+            bottom_right_diagonal = sections[(6, 6)].costs[(grid.width - 1, grid.height - 1)] - sections[(5, 5)].costs[
+                (grid.width - 1, grid.height - 1)]
+
+            top_left_diagonal_remainder_min = (steps - sections[(0, 0)].costs[(0, 0)] - 2) % top_left_diagonal
+            top_left_diagonal_remainder_max = (steps - sections[(1, 0)].costs[(0, 0)] - 2) % top_left_diagonal
+
+            top_right_diagonal_remainder_min = (steps - sections[(6, 0)].costs[
+                (grid.width - 1, 0)] - 2) % top_right_diagonal
+            top_right_diagonal_remainder_max = (steps - sections[(5, 0)].costs[
+                (grid.width - 1, 0)] - 2) % top_right_diagonal
+
+            bottom_left_diagonal_remainder_min = (steps - sections[(0, 6)].costs[
+                (0, grid.height - 1)] - 2) % bottom_left_diagonal
+            bottom_left_diagonal_remainder_max = (steps - sections[(0, 5)].costs[
+                (0, grid.height - 1)] - 2) % bottom_left_diagonal
+
+            bottom_right_diagonal_remainder_min = (steps - sections[(6, 6)].costs[
+                (grid.width - 1, grid.height - 1)] - 2) % bottom_right_diagonal
+            bottom_right_diagonal_remainder_max = (steps - sections[(6, 5)].costs[
+                (grid.width - 1, grid.height - 1)] - 2) % bottom_right_diagonal
+
+            print(top_left_diagonal, top_right_diagonal, bottom_left_diagonal, bottom_right_diagonal)
+
+            top_right_cost = (self.get_even_cost(sections[(0, 0)].zeroed_costs, top_left_diagonal_remainder_min)* (x_repeat_up*2-1) +
+                          self.get_odd_cost(sections[(0, 0)].zeroed_costs, top_left_diagonal_remainder_max)* (x_repeat_up*2-2) )
+
+            top_left_cost = (self.get_even_cost(sections[(6, 0)].zeroed_costs, top_right_diagonal_remainder_min)* (x_repeat_up*2-1) +
+                          self.get_odd_cost(sections[(6, 0)].zeroed_costs, top_right_diagonal_remainder_max)* (x_repeat_up*2-2) )
+
+
+            bottom_right_cost = (self.get_even_cost(sections[(0, 6)].zeroed_costs, bottom_left_diagonal_remainder_min)* (x_repeat_down*2-1) +
+                          self.get_odd_cost(sections[(0, 6)].zeroed_costs, bottom_left_diagonal_remainder_max)* (x_repeat_down*2-2) )
+
+            bottom_left_cost = (self.get_even_cost(sections[(6, 6)].zeroed_costs, bottom_right_diagonal_remainder_min)* (x_repeat_down*2-1) +
+                          self.get_odd_cost(sections[(6, 6)].zeroed_costs, bottom_right_diagonal_remainder_max)* (x_repeat_down*2-2) )
+
+
+            # total_cost += top_right_cost + top_left_cost + bottom_left_cost + bottom_right_cost
+
+
+
+            totals.append(total_cost)
+
+        return ' '.join([str(x) for x in totals])
 
     def bfs(self, grid: Grid) -> dict[(int, int), int]:
         seen: dict[(int, int), int] = {grid.start: 0}
@@ -360,6 +458,6 @@ class Aoc2023010(AocBase):
 if __name__ == '__main__':
     configure()
     aoc = Aoc2023010()
-    failed, results = aoc.run("part1_[0-9]+.txt", "part2_[2-9]+.txt")
+    failed, results = aoc.run("partx1_[0-9]+.txt", "part2_[2-2]+.txt")
     if failed:
         sys.exit(1)

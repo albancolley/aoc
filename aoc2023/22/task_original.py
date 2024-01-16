@@ -1,5 +1,5 @@
 """
-AOC Day 22
+AOC Day 10
 """
 import sys
 from aoc2023.common.aocbase import AocBase
@@ -8,7 +8,7 @@ import collections
 import math
 from collections import defaultdict
 
-class Aoc2023022(AocBase):
+class Aoc2023010(AocBase):
     """
     AOC Day 10 Class
     """
@@ -182,7 +182,7 @@ class Aoc2023022(AocBase):
 
 if __name__ == '__main__':
     configure()
-    aoc = Aoc2023022()
+    aoc = Aoc2023010()
     failed, results = aoc.run("part1x_[0-9]+.txt", "part2_[2-2]+.txt")
     if failed:
         sys.exit(1)

@@ -6,7 +6,7 @@ import re
 
 logger = logging.getLogger("ACO2023-1")
 
-class Aoc202301(AocBase):
+class Aoc202302(AocBase):
 
     def calc_1(self, data: dict) -> int:
         limits = {
@@ -71,7 +71,7 @@ class Aoc202301(AocBase):
 
 if __name__ == '__main__':
     configure()
-    aoc = Aoc202301()
+    aoc = Aoc202302()
     failed, results = aoc.run("part1_[0-9]+.txt", "part2_[0-9]+.txt")
     if failed:
         exit(1)
