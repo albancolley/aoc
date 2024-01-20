@@ -1,5 +1,5 @@
 """
-AOC Day 10
+AOC Day 23
 """
 import sys
 from aoc2023.common.aocbase import AocBase
@@ -7,9 +7,9 @@ from aoc2023.common.setup import configure
 from queue import PriorityQueue
 from collections import defaultdict
 
-class Aoc2023010(AocBase):
+class Aoc202323(AocBase):
     """
-    AOC Day 10 Class
+    AOC Day 23 Class
     """
 
     starts = []
@@ -44,8 +44,6 @@ class Aoc2023010(AocBase):
             step, position, path = q.get()
             tile = grid[(position)]
             next_step = -step + 1
-            if next_step == 5718:
-                pass
             for move in self.moves[tile]:
                 next_position = (position[0] + move[0], position[1] + move[1])
                 if grid[next_position[0], next_position[1]] in self.walls:
@@ -59,27 +57,34 @@ class Aoc2023010(AocBase):
 
         return seen
 
-    def dfs(self, grid, start, end):
-        seen = defaultdict(int)
+    def dfs(self, grid, start, end) -> []:
         q = PriorityQueue()
-        q.put((0, start, [start]))
-        new_paths={}
+        q.put((0, start, [start], True))
+        new_paths = []
         while not q.empty():
-            step, position, path = q.get()
+            step, position, path, skip_first = q.get()
 
-            if position == end:
-                if position not in new_paths:
-                    new_paths[position] = (len( path) , path )
-                else:
-                    new_paths[position] = ( max(new_paths[position][0], len( path)) , path )
-                continue
+            # if position == end:
+            #     new_paths.append((start, end, len(path)))
+            #     if position not in new_paths:
+            #         new_paths[position] = (len(path), path)
+            #     else:
+            #         new_paths[position] = ( max(new_paths[position][0], len( path)), path)
+            #     continue
 
             tile = grid[(position)]
             next_step = -step + 1
             possibles_moves = []
 
-            if position == (13,13):
-                pass
+            if tile in ['<', '>', '^', 'v']:
+                if skip_first:
+                    skip_first = False
+                else:
+                    move = self.moves[tile][0]
+                    next_position = (position[0] + move[0], position[1] + move[1])
+                    path.append(next_position)
+                    new_paths.append((start, next_position, len(path)-1))
+                    continue
 
             for move in self.moves[tile]:
                 next_position = (position[0] + move[0], position[1] + move[1])
@@ -91,96 +96,65 @@ class Aoc2023010(AocBase):
 
                 possibles_moves.append(next_position)
 
-
-            if len(possibles_moves) == 1 or position == start:
-                for next_position in possibles_moves:
-                    seen[next_position] = max(next_step,  seen[next_position])
-                    q.put((-next_step, next_position, path + [next_position]))
-            else:
-                if position not in new_paths:
-                    new_paths[position] = (len( path) , path )
-                else:
-                    new_paths[position] = ( max(new_paths[position][0], len( path)) , path )
-
-
-
-
-                # if seen[next_position] < next_step:
+            for next_position in possibles_moves:
+                q.put((-next_step, next_position, path + [next_position], skip_first))
 
         return new_paths
 
     def calc_1(self, data: dict) -> int:
         grid, width, height, start, end = data
-        self.view(grid, width, height)
+        # self.view(grid, width, height)
         result = self.dfs1(grid, start, end)
 
         return result[end]
 
     def calc_2(self, data: [str]) -> int:
         grid, width, height, start, end = data
-        for p in grid:
-            if grid[p] in ['>','<','^','v']:
-                grid[p] = '.'
-        # self.view(grid, width, height)
 
-        results = {}
-        seen_points = [end]
-        start_points = [start]
-        while len(start_points) > 0:
-            s = start_points.pop(0)
-            # if s in seen_points:
-            #     print(f'start_point_stuck={s}, {seen_points}')
-            #     continue
-            # print(f'start_point={s}')
-            seen_points += [s]
-            # print(seen_points)
-            new_paths = self.dfs(grid, s, end)
-            results[s] = new_paths
-            for longest_paths in new_paths:
-                p, paths = new_paths[longest_paths]
-                if paths[-1] not in seen_points:
-                    start_points.append(paths[-1])
-                # for x in paths[:-1]:
-                #     grid[x] = self.walls[0]
-            # self.view(grid, width, height)
-        # self.view(grid, width, height, result,5)
-        # 4582 - too low
+        # added to simplify the dfs code to look for the second slope.
+        grid[start] = 'v'
+        grid[end[0], end[1]-1] = 'v'
 
-        print("here")
+        new_paths: list = self.dfs(grid, start, end)
 
-        distances = 0
-        paths = PriorityQueue()
-        paths.put((0, start, [start]))
-        seen = defaultdict(int)
-        while not paths.empty():
-            step, start, path = paths.get()
-            # print(step, start, path)
-            for r in results[start]:
-                length, steps = results[start][r]
-                end_step = steps[-1]
-                new_path = path + steps[1:]
-                if end_step == end:
-                    distances = max(distances, len(new_path))
-                    print(distances, paths.qsize())
-                    continue
-                if end_step not in path:
-                    # if len(new_path) > seen[end_step]:
-                    #     seen[end_step] = len(new_path)
-                    paths.put((-(len(new_path) -1), end_step, new_path))
+        #simplify graph to get distances to next slope
+        #simple_path with contain the start and end points between the "top" or "bottom" of a slope
+        # i.e. the stars (*) part of example graph below.
+        # #.#####################
+        # #.......#########...###
+        # #######.#########.#.###
+        # ###.....#.>*>.###.#.###
+        # ###v#####.#v#.###.#.###
+        # ###*>...#.#.#.....#...#
+        # ###v###.#.#.#########.#
+        simple_paths = {}
+        while len(new_paths) > 0:
+            path = new_paths.pop(0)
+            if path[0] not in simple_paths:
+                simple_paths[path[0]] = {}
+            simple_paths[path[0]][path[1]] = path[2]
+            if path[1] not in simple_paths:
+                simple_paths[path[1]] = {}
+            simple_paths[path[1]][path[0]] = path[2]
 
-        print(distances)
-        # print(distance_paths[11])
-        # seen = defaultdict(int)
-        # for i in distance_paths[11]:
-        #     seen[i] = 1
-        # self.view(grid, width, height, seen)
+            paths = self.dfs(grid, path[1], end)
+            new_paths += paths
 
-        # 6563
-        # 6591
-        # 6599
-        # 6875
+        # now search the simple paths for the longest path - have to do them all
+        longest_path = 0
+        paths = [(0, start, [start])]
+        while len(paths) > 0:
+            length, start, path = paths.pop(0)
+            for next_position in simple_paths[start]:
+                new_length = length + simple_paths[start][next_position]
+                if next_position == end:
+                    if longest_path < new_length:
+                        longest_path = new_length
+                        # print(new_length, path + [next_position])
+                elif next_position not in path:
+                    paths.insert(0, (new_length, next_position, path + [next_position]))
 
-        return distances - 1
+        return longest_path
 
     def load_handler_part1(self, data: [str]) -> [str]:
         grid = {}
@@ -218,7 +192,7 @@ class Aoc2023010(AocBase):
 
 if __name__ == '__main__':
     configure()
-    aoc = Aoc2023010()
-    failed, results = aoc.run("part1x_[0-9]+.txt", "part2_[1-1]+.txt")
+    aoc = Aoc202323()
+    failed, results = aoc.run("part1_[0-9]+.txt", "part2_[0-9]+.txt")
     if failed:
         sys.exit(1)
