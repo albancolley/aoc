@@ -93,10 +93,11 @@ class Aoc202323(AocBase):
                 if next_position in path:
                     continue
 
-                possibles_moves.append(next_position)
-
-            for next_position in possibles_moves:
                 q.insert(0, (-next_step, next_position, path + [next_position], skip_first))
+                # possibles_moves.append(next_position)
+
+            # for next_position in possibles_moves:
+            #     q.insert(0, (-next_step, next_position, path + [next_position], skip_first))
 
         return new_paths
 
@@ -113,6 +114,8 @@ class Aoc202323(AocBase):
         grid.grid[grid.end[0], grid.end[1] - 1] = 'v'
 
         new_paths: list = self.dfs(grid, grid.start)
+
+        print(new_paths)
 
         # simplify graph to get distances to next slope
         # simple_path with contain the start and end points between the "top" or "bottom" of a slope
