@@ -6,9 +6,8 @@ from collections import defaultdict
 
 import numpy as np
 
-from aoc2023.common.aocbase import AocBase
-from aoc2023.common.setup import configure
-import collections
+from common import AocBase
+from common import configure
 import math
 
 class Aoc201721(AocBase):

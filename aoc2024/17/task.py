@@ -3,12 +3,9 @@ AOC Day X
 """
 import sys
 
-from astroid.raw_building import register_arguments
+from common import AocBase
+from common import configure
 
-from aoc2023.common.aocbase import AocBase
-from aoc2023.common.setup import configure
-import collections
-import math
 
 class Aoc202417(AocBase):
     """

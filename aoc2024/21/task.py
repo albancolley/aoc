@@ -1,14 +1,12 @@
 """
 AOC Day X
 """
-import heapq
 import sys
-from idlelib.debugger_r import start_remote_debugger
 
-from aoc2023.common.aocbase import AocBase
-from aoc2023.common.setup import configure
+from common import AocBase
+from common import configure
 from collections import Counter
-import math
+
 
 class Aoc202421(AocBase):
     """

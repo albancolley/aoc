@@ -3,13 +3,9 @@ AOC Day X
 """
 import sys
 
-from networkx.algorithms.tree import is_tree
-from vtkmodules.web.render_window_serializer import wrapId
+from common import AocBase
+from common import configure
 
-from aoc2023.common.aocbase import AocBase
-from aoc2023.common.setup import configure
-import collections
-import math
 
 class Aoc202414(AocBase):
     """

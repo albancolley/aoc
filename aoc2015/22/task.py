@@ -5,10 +5,8 @@ import dataclasses
 import sys
 from queue import PriorityQueue
 
-from aoc2023.common.aocbase import AocBase
-from aoc2023.common.setup import configure
-import collections
-import math
+from common import AocBase
+from common import configure
 from dataclasses import dataclass
 from itertools import count
 

@@ -1,16 +1,12 @@
 """
 AOC Day 07
 """
-import heapq
 import re
 import sys
 
-from sympy.physics.optics import quarter_wave_retarder
+from common import AocBase
+from common import configure
 
-from aoc2023.common.aocbase import AocBase
-from aoc2023.common.setup import configure
-import collections
-import math
 
 class Aoc201807(AocBase):
     """

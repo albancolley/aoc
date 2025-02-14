@@ -3,11 +3,9 @@ AOC Day 2016- 25
 """
 import itertools
 import sys
-from aoc2023.common.aocbase import AocBase
-from aoc2023.common.setup import configure
-import collections
-import math
-from dataclasses import dataclass, field
+from common import AocBase
+from common import configure
+from dataclasses import dataclass
 from operator import itemgetter
 
 @dataclass

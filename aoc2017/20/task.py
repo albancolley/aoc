@@ -3,15 +3,10 @@ AOC Day X
 """
 import re
 import sys
-from collections import defaultdict
 
-from matplotlib.pyplot import close
-from networkx.algorithms.shortest_paths.weighted import bellman_ford_predecessor_and_distance
+from common import AocBase
+from common import configure
 
-from aoc2023.common.aocbase import AocBase
-from aoc2023.common.setup import configure
-import collections
-import math
 
 class Aoc201720(AocBase):
     """

@@ -4,12 +4,9 @@ AOC Day X
 import sys
 from collections import defaultdict
 
-from numpy.ma.extras import unique
+from common import AocBase
+from common import configure
 
-from aoc2023.common.aocbase import AocBase
-from aoc2023.common.setup import configure
-import collections
-import math
 
 class Aoc202400(AocBase):
     """

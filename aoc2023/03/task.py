@@ -1,8 +1,6 @@
-from aoc2023.common.aocbase import AocBase
-from aoc2023.common.setup import configure
+from common import AocBase
+from common import configure
 import logging
-import re
-
 
 logger = logging.getLogger("ACO2023-1")
 

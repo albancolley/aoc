@@ -2,15 +2,10 @@
 AOC Day X
 """
 import sys
-from functools import total_ordering
 
-from networkx.algorithms.centrality import subgraph_centrality_exp
-from sympy.physics.units import length
+from common import AocBase
+from common import configure
 
-from aoc2023.common.aocbase import AocBase
-from aoc2023.common.setup import configure
-import collections
-import math
 
 class Aoc202400(AocBase):
     """

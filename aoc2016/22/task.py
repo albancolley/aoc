@@ -3,10 +3,8 @@ AOC Day X
 """
 from dataclasses import dataclass
 import sys
-from aoc2023.common.aocbase import AocBase
-from aoc2023.common.setup import configure
-import collections
-import math
+from common import AocBase
+from common import configure
 import re
 
 @dataclass

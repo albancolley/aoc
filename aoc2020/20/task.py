@@ -3,12 +3,9 @@ AOC Day 10
 """
 import sys
 
-from setuptools.command.rotate import rotate
+from common import AocBase
+from common import configure
 
-from aoc2023.common.aocbase import AocBase
-from aoc2023.common.setup import configure
-import collections
-import math
 
 class Aoc2023010(AocBase):
     """

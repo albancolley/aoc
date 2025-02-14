@@ -1,14 +1,12 @@
 """
 AOC Day X
 """
-import heapq
 import sys
 from collections import defaultdict
 
-from aoc2023.common.aocbase import AocBase
-from aoc2023.common.setup import configure
-import collections
-import math
+from common import AocBase
+from common import configure
+
 
 class Aoc202400(AocBase):
     """
