@@ -13,12 +13,13 @@ class Aoc201807(AocBase):
     AOC Day 07 Class
     """
 
-    def calc_1(self, data: dict) -> int:
-        steps, reverse_steps, start, end= data
-        print(steps, reverse_steps, start, end)
-        queue = [start]
+    def calc_1(self, data: tuple[dict,dict,list]) -> str:
+        steps, reverse_steps, start = data
+        # print(steps, reverse_steps, start, end)
+        queue = start.copy()
         result = []
         while len(queue) > 0:
+            # print(queue)
             possibles = []
             for step in queue:
                 ok = True
@@ -39,11 +40,95 @@ class Aoc201807(AocBase):
                     queue += [s]
         return "".join(result)
 
-    def calc_2(self, data: [str]) -> int:
-        total = 0
-        return total
+    def calc_2(self, data: tuple[dict,dict,list, int, int]) -> int:
+        steps, reverse_steps, starts, worker_count, cost = data
 
-    def load_handler_part1(self, data: [str]) -> [str]:
+        workers = [(None, 0)] * worker_count
+
+        result = []
+        queue:list = starts.copy()
+        rows : list[list] = []
+
+        done = set()
+        workers_count = 0
+
+        while len(queue) > 0 or workers_count > 0:
+
+            pos:int = 0
+            removed = []
+            for start in queue:
+                while pos < worker_count:
+                    if not workers[pos][0]:
+                        workers[pos] = (start, ord(start) - ord('A') + 1 + cost)
+                        removed.append(start)
+                        pos += 1
+                        break
+                    pos += 1
+
+            for r in removed:
+                queue.remove(r)
+
+
+            while True:
+                finished: bool = any([x[1] == 0 for x in workers if x[0]])
+                if finished:
+                    break
+                rows.append(workers.copy())
+                for j in range(0, len(workers)):
+                    if workers[j][0]:
+                        workers[j] =(workers[j][0], workers[j][1] - 1)
+
+            letters_done = [x[0] for x in workers if x[0] and x[1] == 0]
+            result += letters_done
+
+
+
+            for j in range(0, len(workers)):
+                if workers[j][0] and workers[j][1] == 0:
+                    done.add(workers[j][0])
+                    workers[j] = (None, 0)
+
+            in_progress = [x[0] for x in workers if x[0] and x[1] > 0]
+
+            workers_count = len(in_progress)
+
+            possibles = set()
+            for s in done:
+                for step in steps[s]:
+                    if step not in done and step not in in_progress:
+                        possibles.add(step)
+
+            queue = []
+            for p in possibles:
+                add = True
+                for r in reverse_steps[p]:
+                     if r not in done:
+                         add = False
+                         break
+                if add and p not in in_progress:
+                    queue += [p]
+
+            queue.sort()
+
+
+
+        while True:
+            finished: bool = all([x[1] == 0 for x in workers if x[0]])
+            if finished:
+                break
+            rows.append(workers.copy())
+            for j in range(0, len(workers)):
+                if workers[j][0]:
+                    workers[j] =(workers[j][0], workers[j][1] - 1)
+                if workers[j][1] == 0:
+                    workers[j] = (None, 0)
+
+        # for i in rows:
+        #     print(i)
+
+        return len(rows)
+
+    def load_handler_part1(self, data: list[str]) ->  tuple[dict,dict,list] :
         steps: dict = dict()
         reverse_steps: dict = dict()
         for d in data:
@@ -70,20 +155,25 @@ class Aoc201807(AocBase):
                 end = s
                 break
 
+        starts = []
         for s in reverse_steps:
             if len(reverse_steps[s]) == 0:
-                start = s
-                break
+                starts.append(s)
 
-        return steps, reverse_steps, start, end
+        starts.sort()
 
-    def load_handler_part2(self, data: [str]) -> [str]:
-        return self.load_handler_part1(data)
+        return steps, reverse_steps, starts
+
+    def load_handler_part2(self, data: [str]) -> tuple[dict,dict,list, int, int]:
+        steps, reverse_steps, starts = self.load_handler_part1(data[1:])
+        workers = int(data[0].split(',')[0])
+        cost = int(data[0].split(',')[1])
+        return steps, reverse_steps, starts, workers, cost
 
 
 if __name__ == '__main__':
     configure()
     aoc = Aoc201807()
-    failed, results = aoc.run("part1_[0-9]+.txt", "part2_[0-9]+.txt")
+    failed, results = aoc.run("part1x_[0-9]+.txt", "part2_[0-9]+.txt")
     if failed:
         sys.exit(1)

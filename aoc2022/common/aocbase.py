@@ -2,7 +2,6 @@ import os
 import re
 import time
 from abc import ABCMeta, abstractmethod
-from cgitb import reset
 
 from aoc2022.common.io import load_file
 from os.path import splitext, exists

@@ -36,6 +36,10 @@ class AocBase(metaclass=ABCMeta):
     def load_handler_part2(self, data: [str]) -> [str]:
         pass
 
+    def tests(self) -> bool:
+        return True
+
+
     def part_1(self, filename: str) -> Result:
         start_time = time.perf_counter()
         data = load_file(filename, self.load_handler_part1)
@@ -111,6 +115,9 @@ class AocBase(metaclass=ABCMeta):
         return results
 
     def run(self, part1_path: str, part2_path: str) -> []:
+        if not self.tests():
+            print("Tests Failed")
+            return True, "Tests Failed"
         print(f'{"":21s} {"Expected":30s} {"Actual":30s} {"Time (s.ms)":8s} {"Load Time":8s} {"Calc Time":8s}')
         print(f'{"Part 1":21s}')
         p1 = self.run_part_1(part1_path)

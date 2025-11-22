@@ -1,0 +1,38 @@
+"""
+AOC Day 10
+"""
+import sys
+from common import AocBase
+from common import configure
+
+
+class Aoc201900(AocBase):
+    """
+    AOC Day 10 Class
+    """
+
+    def calc_1(self, data: dict) -> int:
+        result = 0
+        for d in data:
+            score = 0
+            for c in d:
+               print(int(c))
+        return result
+
+    def calc_2(self, data: [str]) -> int:
+        total = 0
+        return total
+
+    def load_handler_part1(self, data: [str]) -> [str]:
+        return data
+
+    def load_handler_part2(self, data: [str]) -> [str]:
+        return self.load_handler_part1(data)
+
+
+if __name__ == '__main__':
+    configure()
+    aoc = Aoc201900()
+    failed, results = aoc.run("part1_[0-9]+.txt", "part2_[0-9]+.txt")
+    if failed:
+        sys.exit(1)
